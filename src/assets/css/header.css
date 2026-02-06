@@ -1,12 +1,13 @@
 /* ==========================================================================
    Site Header & Navigation (Dark Theme)
+   Mobile-first: header scales with viewport.
    ========================================================================== */
 
 .site-header {
   position: sticky;
   top: 0;
   z-index: 100;
-  height: var(--header-height);
+  height: 56px;
   background: rgba(0, 0, 0, 0.92);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
@@ -30,13 +31,13 @@
 }
 
 .site-logo img {
-  height: 48px;
+  height: 36px;
   width: auto;
 }
 
 .site-logo__text {
   font-family: var(--font-heading);
-  font-size: 1rem;
+  font-size: 0.875rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--color-blue);
@@ -83,6 +84,7 @@
   justify-content: center;
   gap: var(--space-sm);
   min-height: var(--min-touch-target);
+  min-width: var(--min-touch-target);
   padding: var(--space-sm);
   background: none;
   border: none;
@@ -93,6 +95,10 @@
   font-weight: 400;
   text-transform: uppercase;
   letter-spacing: 0.08em;
+}
+
+.nav-toggle__label {
+  display: none;
 }
 
 .nav-toggle__icon {
@@ -135,13 +141,14 @@
 .nav-mobile {
   display: none;
   position: fixed;
-  top: var(--header-height);
+  top: 56px;
   left: 0;
   right: 0;
   bottom: 0;
   background: rgba(0, 0, 0, 0.97);
-  padding: var(--space-xl) var(--space-lg);
+  padding: var(--space-lg) var(--space-md);
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   z-index: 99;
 }
 
@@ -152,7 +159,7 @@
 .nav-mobile__list {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: 0;
 }
 
 .nav-mobile__link {
@@ -176,14 +183,49 @@
   text-shadow: 0 0 8px rgba(0, 151, 255, 0.5);
 }
 
-/* --- Responsive: Show desktop nav at 768px+ --- */
+/* ==========================================================================
+   Breakpoints
+   ========================================================================== */
 
+/* --- 480px+: Larger phones, show nav label --- */
+@media (min-width: 480px) {
+  .site-header {
+    height: 64px;
+  }
+
+  .nav-mobile {
+    top: 64px;
+    padding: var(--space-xl) var(--space-lg);
+  }
+
+  .site-logo img {
+    height: 42px;
+  }
+
+  .site-logo__text {
+    font-size: 1rem;
+  }
+
+  .nav-toggle__label {
+    display: inline;
+  }
+}
+
+/* --- 768px+: Desktop nav --- */
 @media (min-width: 768px) {
+  .site-header {
+    height: var(--header-height);
+  }
+
   .nav-desktop {
     display: block;
   }
 
   .nav-toggle {
     display: none;
+  }
+
+  .site-logo img {
+    height: 48px;
   }
 }
