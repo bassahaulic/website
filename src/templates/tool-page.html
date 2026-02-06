@@ -1,0 +1,53 @@
+<!-- config: {
+  "page_title": "Tool Name",
+  "meta_description": "Brief description of this tool for search engines.",
+  "extra_css": "",
+  "extra_js": "<script src=\"/assets/js/your-tool.js\" defer></script>"
+} -->
+
+    <section class="section">
+      <div class="container container--narrow">
+        <nav class="breadcrumbs" aria-label="Breadcrumb">
+          <a href="/">Home</a>
+          <span class="breadcrumbs__separator" aria-hidden="true">/</span>
+          <a href="/calculators/">Calculators</a>
+          <span class="breadcrumbs__separator" aria-hidden="true">/</span>
+          <span aria-current="page">Tool Name</span>
+        </nav>
+
+        <h1>Tool Name</h1>
+        <p class="page-intro">
+          What this tool does in one sentence.
+        </p>
+
+        <div class="tool-panel tool-panel--spaced">
+          <div class="tool-panel__header">
+            <h2 class="tool-panel__title">Calculator Title</h2>
+          </div>
+
+          <form id="tool-form" onsubmit="return false;">
+            <div class="grid grid--2col">
+              <div class="form-group">
+                <label for="input-1" class="form-label">Input Label</label>
+                <input type="number" id="input-1" class="form-input" placeholder="e.g. 100" required>
+                <p class="form-hint">Helper text explaining the input</p>
+              </div>
+
+              <div class="form-group">
+                <label for="input-2" class="form-label">Input Label</label>
+                <input type="number" id="input-2" class="form-input" placeholder="e.g. 50" required>
+                <p class="form-hint">Helper text explaining the input</p>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn--secondary btn--block">Calculate</button>
+          </form>
+
+          <div id="tool-result" class="tool-panel__result" hidden>
+            <div class="tool-panel__result-label">Result Label</div>
+            <div class="tool-panel__result-value" id="result-value">--</div>
+            <p id="result-detail" class="tool-panel__result-detail"></p>
+          </div>
+        </div>
+      </div>
+    </section>
