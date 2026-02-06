@@ -1,45 +1,75 @@
 <!-- config: {
   "page_title": "Home",
-  "meta_description": "Bassahaulic Productions - Car audio tools, calculators, and resources for enthusiasts and professionals.",
+  "meta_description": "Bassahaulic Productions - Car audio tools, calculators, and resources for enthusiasts and professionals. Join 10k+ audio enthusiasts.",
   "extra_css": "",
   "extra_js": ""
 } -->
 
-    <section class="section">
-      <div class="container" style="text-align: center; padding-block: var(--space-3xl);">
-        <h1>Bassahaulic Productions</h1>
-        <p style="max-width: 600px; margin-inline: auto; margin-top: var(--space-lg); font-size: 1.125rem; color: #555;">
-          Tools, calculators, and resources for car audio enthusiasts and professionals.
+    <!-- Hero Section -->
+    <section class="section" style="padding-top: var(--space-4xl); padding-bottom: var(--space-2xl);">
+      <div class="container text-center">
+        <h1>Welcome To Bassahaulic Productions</h1>
+        <p style="max-width: 650px; margin-inline: auto; margin-top: var(--space-lg); color: var(--color-text-muted); font-size: 1.0625rem;">
+          Join 10k+ audio enthusiasts &bull; Free educational resources &bull; Community-driven knowledge
         </p>
-        <div style="margin-top: var(--space-xl); display: flex; gap: var(--space-md); justify-content: center; flex-wrap: wrap;">
-          <a href="/calculators/" class="btn btn--primary">Calculators</a>
-          <a href="/tools/" class="btn btn--secondary">Tools</a>
-          <a href="/articles/" class="btn btn--secondary">Articles</a>
+
+        <!-- Primary CTA -->
+        <div style="margin-top: var(--space-xl);">
+          <a href="/articles/" class="btn btn--primary btn--lg">
+            Start Learning
+            <br><span style="font-size: 0.75rem; font-weight: 400; text-transform: none; letter-spacing: 0;">Dive into acoustic theory &amp; design principles</span>
+          </a>
         </div>
       </div>
     </section>
 
+    <!-- BUILD / TEST / TUNE Section -->
     <section class="section">
       <div class="container">
-        <h2>Popular Tools</h2>
-        <div class="grid grid--3col" style="margin-top: var(--space-lg);">
-          <a href="/calculators/" class="card">
-            <div class="card__body">
-              <h3 class="card__title" style="font-size: 1rem;">Calculators</h3>
-              <p class="card__text">Box volume, port tuning, wire gauge, and more.</p>
-            </div>
+        <p class="section-label section-label--cyan">Build / Test / Tune</p>
+
+        <div style="display: flex; flex-direction: column; gap: var(--space-lg); margin-top: var(--space-xl);">
+          <a href="/calculators/" class="nav-card">
+            <h3 class="nav-card__title">Tools & Calculators</h3>
+            <p class="nav-card__desc">Box volume, port tuning &amp; acoustic calculators</p>
           </a>
-          <a href="/tools/" class="card">
-            <div class="card__body">
-              <h3 class="card__title" style="font-size: 1rem;">Tools</h3>
-              <p class="card__text">Interactive utilities for planning and building.</p>
-            </div>
+
+          <a href="/tools/" class="nav-card">
+            <h3 class="nav-card__title">Box Designs</h3>
+            <p class="nav-card__desc">Professional enclosure designs</p>
           </a>
-          <a href="/articles/" class="card">
-            <div class="card__body">
-              <h3 class="card__title" style="font-size: 1rem;">Articles</h3>
-              <p class="card__text">Guides, tutorials, and deep dives.</p>
-            </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LEARN Section -->
+    <section class="section">
+      <div class="container">
+        <p class="section-label section-label--pink">Learn</p>
+
+        <div style="display: flex; flex-direction: column; gap: var(--space-lg); margin-top: var(--space-xl);">
+          <a href="/tools/" class="nav-card">
+            <h3 class="nav-card__title">Audio Files</h3>
+            <p class="nav-card__desc">Test tones, sweeps &amp; reference tracks for tuning</p>
+          </a>
+
+          <a href="/articles/" class="nav-card">
+            <h3 class="nav-card__title">Resources</h3>
+            <p class="nav-card__desc">Comprehensive guides, datasheets &amp; references</p>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONNECT Section -->
+    <section class="section">
+      <div class="container">
+        <p class="section-label section-label--green">Connect</p>
+
+        <div style="display: flex; flex-direction: column; gap: var(--space-lg); margin-top: var(--space-xl);">
+          <a href="/about/" class="nav-card">
+            <h3 class="nav-card__title">About Us</h3>
+            <p class="nav-card__desc">Learn more about Bassahaulic Productions</p>
           </a>
         </div>
       </div>

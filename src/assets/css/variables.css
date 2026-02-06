@@ -1,29 +1,43 @@
 /* ==========================================================================
    Bassahaulic Productions - Design Tokens
-   All design values as CSS custom properties. Single source of truth.
+   Dark theme with cyan/pink accents. Single source of truth.
    ========================================================================== */
 
 :root {
-  /* --- Colors: Primary --- */
-  --color-bg: #FFFFFF;
-  --color-text: #121212;
-  --color-border: #E5E5E5;
+  /* --- Colors: Primary (Dark Theme) --- */
+  --color-bg: #000000;
+  --color-bg-elevated: #0a0a0a;
+  --color-text: #E0E0E0;
+  --color-text-bright: #FFFFFF;
+  --color-text-muted: #888888;
+  --color-border: rgba(0, 209, 255, 0.25);
+  --color-border-subtle: rgba(255, 255, 255, 0.08);
 
   /* --- Colors: Accents --- */
-  --color-accent-blue: #00D1FF;
-  --color-accent-pink: #FF007A;
-  --color-accent-green: #00FF41;
+  --color-cyan: #00D1FF;
+  --color-pink: #FF007A;
+  --color-green: #00FF41;
+
+  /* --- Colors: Glow Effects --- */
+  --glow-cyan: 0 0 10px rgba(0, 209, 255, 0.4), 0 0 30px rgba(0, 209, 255, 0.15);
+  --glow-pink: 0 0 10px rgba(255, 0, 122, 0.4), 0 0 30px rgba(255, 0, 122, 0.15);
+  --glow-cyan-strong: 0 0 15px rgba(0, 209, 255, 0.6), 0 0 40px rgba(0, 209, 255, 0.25);
+  --glow-pink-strong: 0 0 15px rgba(255, 0, 122, 0.6), 0 0 40px rgba(255, 0, 122, 0.25);
 
   /* --- Colors: UI Surfaces --- */
-  --color-surface-light: #F9F9F9;
-  --color-surface-dark: #1A1A1A;
-  --color-text-inverted: #FFFFFF;
+  --color-surface: rgba(10, 10, 10, 0.85);
+  --color-surface-border: rgba(0, 209, 255, 0.2);
+  --color-surface-hover: rgba(0, 209, 255, 0.05);
 
   /* --- Typography: Headings --- */
-  --font-heading: 'Montserrat', sans-serif;
-  --font-heading-weight: 700;
-  --font-heading-transform: uppercase;
-  --font-heading-spacing: 0.05em;
+  --font-heading: 'Creepster', 'Montserrat', sans-serif;
+  --font-heading-weight: 400;
+  --font-heading-transform: none;
+  --font-heading-spacing: 0.02em;
+
+  /* --- Typography: Sub-headings (for section labels like BUILD / TEST / TUNE) --- */
+  --font-subheading: 'Montserrat', sans-serif;
+  --font-subheading-weight: 700;
 
   /* --- Typography: Body --- */
   --font-body: 'Inter', 'Assistant', system-ui, sans-serif;
@@ -31,31 +45,33 @@
   --font-body-line-height: 1.6;
   --font-body-size: 16px;
 
-  /* --- Spacing Scale (based on 0.5rem = 8px) --- */
-  --space-xs: 0.25rem;   /* 4px */
-  --space-sm: 0.5rem;    /* 8px */
-  --space-md: 1rem;      /* 16px */
-  --space-lg: 1.5rem;    /* 24px */
-  --space-xl: 2rem;      /* 32px */
-  --space-2xl: 3rem;     /* 48px */
-  --space-3xl: 4rem;     /* 64px */
+  /* --- Spacing Scale --- */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+  --space-3xl: 4rem;
+  --space-4xl: 6rem;
 
   /* --- Component Tokens --- */
   --radius-sm: 4px;
   --radius-md: 8px;
   --radius-lg: 12px;
 
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
-  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.05);
-  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.5);
 
   --transition-fast: 150ms ease;
   --transition-base: 250ms ease;
+  --transition-slow: 400ms ease;
 
   /* --- Layout --- */
   --content-max-width: 1200px;
   --content-narrow: 800px;
-  --header-height: 64px;
+  --header-height: 70px;
 
   /* --- Touch Targets --- */
   --min-touch-target: 44px;

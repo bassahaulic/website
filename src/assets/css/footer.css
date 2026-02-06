@@ -1,10 +1,11 @@
 /* ==========================================================================
-   Site Footer
+   Site Footer (Dark Theme)
    ========================================================================== */
 
 .site-footer {
-  background: var(--color-surface-dark);
-  color: var(--color-text-inverted);
+  background: rgba(0, 0, 0, 0.95);
+  border-top: 1px solid var(--color-border-subtle);
+  color: var(--color-text);
   padding-block: var(--space-2xl);
   margin-top: var(--space-3xl);
 }
@@ -16,9 +17,13 @@
 }
 
 .site-footer__heading {
+  font-family: var(--font-subheading);
+  font-weight: 700;
   font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
   margin-bottom: var(--space-md);
-  color: var(--color-accent-blue);
+  color: var(--color-cyan);
 }
 
 .site-footer__links {
@@ -28,22 +33,22 @@
 }
 
 .site-footer__link {
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--color-text-muted);
   text-decoration: none;
   font-size: 0.875rem;
   transition: color var(--transition-fast);
 }
 
 .site-footer__link:hover {
-  color: var(--color-text-inverted);
+  color: var(--color-cyan);
 }
 
 .site-footer__bottom {
   margin-top: var(--space-xl);
   padding-top: var(--space-lg);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid var(--color-border-subtle);
   font-size: 0.8125rem;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--color-text-muted);
 }
 
 @media (min-width: 768px) {
