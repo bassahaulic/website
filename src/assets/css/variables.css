@@ -7,13 +7,13 @@
   /* --- Colors: Primary (Dark Theme) --- */
   --color-bg: #000000;
   --color-bg-elevated: #0a0a0a;
-  --color-text: #E0E0E0;
+  --color-text: #F0F0F0;
   --color-text-bright: #FFFFFF;
-  --color-text-muted: #cccccc;
-  --color-text-dim: #888888;
-  --color-border: rgba(0, 151, 255, 0.25);
-  --color-border-subtle: rgba(255, 255, 255, 0.08);
-  --color-border-muted: #666666;
+  --color-text-muted: #D4D4D4;
+  --color-text-dim: #999999;
+  --color-border: rgba(0, 151, 255, 0.4);
+  --color-border-subtle: rgba(255, 255, 255, 0.12);
+  --color-border-muted: #888888;
 
   /* --- Colors: Accents (matched to source) --- */
   --color-blue: #0097FF;
@@ -21,15 +21,15 @@
   --color-green: #00FF41;
 
   /* --- Colors: Glow Effects --- */
-  --glow-blue: 0 0 10px rgba(0, 151, 255, 0.3);
-  --glow-pink: 0 0 10px rgba(226, 26, 255, 0.3);
-  --glow-blue-strong: 0 0 15px rgba(0, 151, 255, 0.4), 0 0 30px rgba(0, 151, 255, 0.15);
-  --glow-pink-strong: 0 0 20px rgba(226, 26, 255, 0.6);
+  --glow-blue: 0 0 12px rgba(0, 151, 255, 0.4);
+  --glow-pink: 0 0 12px rgba(226, 26, 255, 0.4);
+  --glow-blue-strong: 0 0 20px rgba(0, 151, 255, 0.5), 0 0 40px rgba(0, 151, 255, 0.2);
+  --glow-pink-strong: 0 0 25px rgba(226, 26, 255, 0.7);
 
   /* --- Colors: UI Surfaces --- */
-  --color-surface: rgba(10, 10, 10, 0.85);
-  --color-surface-border: rgba(0, 151, 255, 0.2);
-  --color-surface-hover: rgba(226, 26, 255, 0.08);
+  --color-surface: rgba(0, 0, 0, 0.4);
+  --color-surface-border: rgba(0, 151, 255, 0.35);
+  --color-surface-hover: rgba(226, 26, 255, 0.1);
 
   /* --- Typography: Headings (Audiowide from source) --- */
   --font-heading: 'Audiowide', sans-serif;
@@ -45,7 +45,7 @@
   --font-body: 'Roboto', 'Inter', system-ui, sans-serif;
   --font-body-weight: 300;
   --font-body-line-height: 1.6;
-  --font-body-size: 16px;
+  --font-body-size: 18px;
 
   /* --- Spacing Scale --- */
   --space-xs: 0.25rem;
