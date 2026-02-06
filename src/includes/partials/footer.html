@@ -1,0 +1,37 @@
+  <footer class="site-footer">
+    <div class="container">
+      <div class="site-footer__grid">
+        <div>
+          <h3 class="site-footer__heading">Bassahaulic Productions</h3>
+          <p class="site-footer__link">Tools, calculators, and resources for car audio enthusiasts.</p>
+        </div>
+        <div>
+          <h3 class="site-footer__heading">Calculators</h3>
+          <div class="site-footer__links">
+            <a href="/calculators/" class="site-footer__link">All Calculators</a>
+            <!-- Add calculator links as you build them -->
+          </div>
+        </div>
+        <div>
+          <h3 class="site-footer__heading">Resources</h3>
+          <div class="site-footer__links">
+            <a href="/tools/" class="site-footer__link">Tools</a>
+            <a href="/articles/" class="site-footer__link">Articles</a>
+          </div>
+        </div>
+        <div>
+          <h3 class="site-footer__heading">Company</h3>
+          <div class="site-footer__links">
+            <a href="/about/" class="site-footer__link">About</a>
+          </div>
+        </div>
+      </div>
+      <div class="site-footer__bottom">
+        <p>&copy; <span id="footer-year"></span> Bassahaulic Productions. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('footer-year').textContent = new Date().getFullYear();
+  </script>

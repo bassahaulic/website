@@ -1,0 +1,14 @@
+{
+  "name": "bassahaulic-productions",
+  "version": "1.0.0",
+  "description": "Bassahaulic Productions website - tools, calculators, and resources",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/build.js",
+    "dev": "node scripts/build.js --watch",
+    "clean": "rm -rf dist"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
