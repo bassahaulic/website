@@ -1,6 +1,6 @@
 /* ==========================================================================
    Bassahaulic Productions - Design Tokens
-   Dark theme with cyan/pink accents. Single source of truth.
+   Dark theme. Colors matched to existing site source code.
    ========================================================================== */
 
 :root {
@@ -9,39 +9,41 @@
   --color-bg-elevated: #0a0a0a;
   --color-text: #E0E0E0;
   --color-text-bright: #FFFFFF;
-  --color-text-muted: #888888;
-  --color-border: rgba(0, 209, 255, 0.25);
+  --color-text-muted: #cccccc;
+  --color-text-dim: #888888;
+  --color-border: rgba(0, 151, 255, 0.25);
   --color-border-subtle: rgba(255, 255, 255, 0.08);
+  --color-border-muted: #666666;
 
-  /* --- Colors: Accents --- */
-  --color-cyan: #00D1FF;
-  --color-pink: #FF007A;
+  /* --- Colors: Accents (matched to source) --- */
+  --color-blue: #0097FF;
+  --color-pink: #E21AFF;
   --color-green: #00FF41;
 
   /* --- Colors: Glow Effects --- */
-  --glow-cyan: 0 0 10px rgba(0, 209, 255, 0.4), 0 0 30px rgba(0, 209, 255, 0.15);
-  --glow-pink: 0 0 10px rgba(255, 0, 122, 0.4), 0 0 30px rgba(255, 0, 122, 0.15);
-  --glow-cyan-strong: 0 0 15px rgba(0, 209, 255, 0.6), 0 0 40px rgba(0, 209, 255, 0.25);
-  --glow-pink-strong: 0 0 15px rgba(255, 0, 122, 0.6), 0 0 40px rgba(255, 0, 122, 0.25);
+  --glow-blue: 0 0 10px rgba(0, 151, 255, 0.3);
+  --glow-pink: 0 0 10px rgba(226, 26, 255, 0.3);
+  --glow-blue-strong: 0 0 15px rgba(0, 151, 255, 0.4), 0 0 30px rgba(0, 151, 255, 0.15);
+  --glow-pink-strong: 0 0 20px rgba(226, 26, 255, 0.6);
 
   /* --- Colors: UI Surfaces --- */
   --color-surface: rgba(10, 10, 10, 0.85);
-  --color-surface-border: rgba(0, 209, 255, 0.2);
-  --color-surface-hover: rgba(0, 209, 255, 0.05);
+  --color-surface-border: rgba(0, 151, 255, 0.2);
+  --color-surface-hover: rgba(226, 26, 255, 0.08);
 
-  /* --- Typography: Headings --- */
-  --font-heading: 'Creepster', 'Montserrat', sans-serif;
+  /* --- Typography: Headings (Audiowide from source) --- */
+  --font-heading: 'Audiowide', sans-serif;
   --font-heading-weight: 400;
   --font-heading-transform: none;
   --font-heading-spacing: 0.02em;
 
-  /* --- Typography: Sub-headings (for section labels like BUILD / TEST / TUNE) --- */
-  --font-subheading: 'Montserrat', sans-serif;
-  --font-subheading-weight: 700;
+  /* --- Typography: Section Labels --- */
+  --font-subheading: 'Audiowide', sans-serif;
+  --font-subheading-weight: 400;
 
-  /* --- Typography: Body --- */
-  --font-body: 'Inter', 'Assistant', system-ui, sans-serif;
-  --font-body-weight: 400;
+  /* --- Typography: Body (Roboto from source) --- */
+  --font-body: 'Roboto', 'Inter', system-ui, sans-serif;
+  --font-body-weight: 300;
   --font-body-line-height: 1.6;
   --font-body-size: 16px;
 
@@ -65,12 +67,14 @@
   --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.5);
 
   --transition-fast: 150ms ease;
-  --transition-base: 250ms ease;
+  --transition-base: 300ms ease;
   --transition-slow: 400ms ease;
 
   /* --- Layout --- */
   --content-max-width: 1200px;
   --content-narrow: 800px;
+  --nav-card-max-width: 450px;
+  --nav-card-item-max-width: 400px;
   --header-height: 70px;
 
   /* --- Touch Targets --- */

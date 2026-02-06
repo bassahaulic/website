@@ -17,13 +17,12 @@
 }
 
 .site-footer__heading {
-  font-family: var(--font-subheading);
-  font-weight: 700;
+  font-family: var(--font-heading);
   font-size: 0.875rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   margin-bottom: var(--space-md);
-  color: var(--color-cyan);
+  color: var(--color-blue);
 }
 
 .site-footer__links {
@@ -33,14 +32,14 @@
 }
 
 .site-footer__link {
-  color: var(--color-text-muted);
+  color: var(--color-text-dim);
   text-decoration: none;
   font-size: 0.875rem;
   transition: color var(--transition-fast);
 }
 
 .site-footer__link:hover {
-  color: var(--color-cyan);
+  color: var(--color-blue);
 }
 
 .site-footer__bottom {
@@ -48,7 +47,7 @@
   padding-top: var(--space-lg);
   border-top: 1px solid var(--color-border-subtle);
   font-size: 0.8125rem;
-  color: var(--color-text-muted);
+  color: var(--color-text-dim);
 }
 
 @media (min-width: 768px) {

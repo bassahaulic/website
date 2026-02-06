@@ -35,12 +35,11 @@
 }
 
 .site-logo__text {
-  font-family: var(--font-subheading);
-  font-weight: 700;
+  font-family: var(--font-heading);
   font-size: 1rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--color-cyan);
+  color: var(--color-blue);
 }
 
 /* --- Desktop Nav --- */
@@ -56,12 +55,12 @@
 }
 
 .nav-desktop__link {
-  font-family: var(--font-subheading);
+  font-family: var(--font-body);
   font-size: 0.8125rem;
-  font-weight: 600;
+  font-weight: 400;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--color-cyan);
+  color: var(--color-blue);
   text-decoration: none;
   padding: var(--space-xs) 0;
   border-bottom: 2px solid transparent;
@@ -72,8 +71,8 @@
 
 .nav-desktop__link:hover,
 .nav-desktop__link--active {
-  border-bottom-color: var(--color-cyan);
-  text-shadow: 0 0 8px rgba(0, 209, 255, 0.5);
+  border-bottom-color: var(--color-blue);
+  text-shadow: 0 0 8px rgba(0, 151, 255, 0.5);
 }
 
 /* --- Mobile Menu Toggle --- */
@@ -87,11 +86,11 @@
   padding: var(--space-sm);
   background: none;
   border: none;
-  color: var(--color-cyan);
+  color: var(--color-blue);
   cursor: pointer;
-  font-family: var(--font-subheading);
+  font-family: var(--font-body);
   font-size: 0.8125rem;
-  font-weight: 700;
+  font-weight: 400;
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
@@ -158,12 +157,12 @@
 
 .nav-mobile__link {
   display: block;
-  font-family: var(--font-subheading);
+  font-family: var(--font-body);
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 400;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--color-cyan);
+  color: var(--color-blue);
   text-decoration: none;
   padding: var(--space-md) 0;
   border-bottom: 1px solid var(--color-border-subtle);
@@ -174,7 +173,7 @@
 .nav-mobile__link:hover,
 .nav-mobile__link--active {
   color: var(--color-text-bright);
-  text-shadow: 0 0 8px rgba(0, 209, 255, 0.5);
+  text-shadow: 0 0 8px rgba(0, 151, 255, 0.5);
 }
 
 /* --- Responsive: Show desktop nav at 768px+ --- */

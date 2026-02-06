@@ -57,14 +57,11 @@ p + p { margin-top: var(--space-md); }
 .section-label {
   font-family: var(--font-subheading);
   font-weight: var(--font-subheading-weight);
-  font-size: clamp(1rem, 2.5vw, 1.5rem);
+  font-size: 18px;
   text-transform: uppercase;
-  letter-spacing: 0.15em;
+  letter-spacing: 1px;
   text-align: center;
-}
-
-.section-label--cyan {
-  color: var(--color-cyan);
+  opacity: 0.8;
 }
 
 .section-label--pink {
@@ -72,13 +69,13 @@ p + p { margin-top: var(--space-md); }
 }
 
 .section-label--green {
-  color: var(--color-green);
+  color: var(--color-pink);
 }
 
 /* --- Links --- */
 
 a:not([class]) {
-  color: var(--color-cyan);
+  color: var(--color-blue);
   text-decoration: underline;
   text-underline-offset: 2px;
   transition: color var(--transition-fast);
@@ -91,7 +88,7 @@ a:not([class]):hover {
 /* --- Selection --- */
 
 ::selection {
-  background: rgba(0, 209, 255, 0.3);
+  background: rgba(0, 151, 255, 0.3);
   color: var(--color-text-bright);
 }
 
@@ -130,7 +127,7 @@ a:not([class]):hover {
   left: var(--space-md);
   z-index: 9999;
   padding: var(--space-sm) var(--space-md);
-  background: var(--color-cyan);
+  background: var(--color-blue);
   color: var(--color-bg);
   border-radius: var(--radius-sm);
   font-weight: 600;
@@ -188,12 +185,12 @@ a:not([class]):hover {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(0, 209, 255, 0.3);
+  background: rgba(0, 151, 255, 0.3);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 209, 255, 0.5);
+  background: rgba(0, 151, 255, 0.5);
 }
 
 [hidden] {
