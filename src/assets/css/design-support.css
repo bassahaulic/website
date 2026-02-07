@@ -1,0 +1,143 @@
+/* ==========================================================================
+   Design Support - Accordion & Product Cards
+   ========================================================================== */
+
+/* --- Accordion --- */
+
+.accordion {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-md);
+  overflow: hidden;
+}
+
+.accordion__btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: var(--space-md) var(--space-lg);
+  background: transparent;
+  border: none;
+  color: var(--color-blue);
+  font-family: var(--font-heading);
+  font-size: clamp(0.875rem, 3vw, 1.125rem);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: color var(--transition-fast),
+              text-shadow var(--transition-fast);
+}
+
+.accordion__btn::after {
+  content: '+';
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-blue);
+  transition: transform var(--transition-base);
+}
+
+.accordion__btn[aria-expanded="true"]::after {
+  content: '−';
+}
+
+.accordion__btn:hover {
+  color: var(--color-text-bright);
+  text-shadow: 0 0 8px rgba(0, 151, 255, 0.5);
+}
+
+.accordion__panel {
+  display: none;
+  padding: 0 var(--space-md) var(--space-md);
+}
+
+.accordion__btn[aria-expanded="true"] + .accordion__panel {
+  display: block;
+}
+
+/* --- Product Grid --- */
+
+.product-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-md);
+}
+
+@media (min-width: 480px) {
+  .product-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .accordion__panel {
+    padding: 0 var(--space-lg) var(--space-lg);
+  }
+}
+
+@media (min-width: 768px) {
+  .product-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* --- Product Card --- */
+
+.product-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  padding: var(--space-md);
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  transition: all var(--transition-base);
+}
+
+.product-card:hover {
+  border-color: var(--color-pink);
+  box-shadow: var(--glow-pink);
+  transform: translateY(-1px);
+}
+
+.product-card__title {
+  font-family: var(--font-heading);
+  font-size: 0.9375rem;
+  color: var(--color-text-bright);
+  font-weight: 400;
+}
+
+.product-card__meta {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  font-weight: 300;
+}
+
+.product-card__source {
+  font-size: 0.75rem;
+  color: var(--color-blue);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: auto;
+}
+
+/* --- Info Block (tips/guides inside accordion) --- */
+
+.info-block {
+  grid-column: 1 / -1;
+  padding: var(--space-md);
+  background: rgba(0, 151, 255, 0.05);
+  border: 1px solid rgba(0, 151, 255, 0.2);
+  border-radius: var(--radius-md);
+}
+
+.info-block h3 {
+  font-size: 1rem;
+  margin-bottom: var(--space-sm);
+  color: var(--color-blue);
+}
+
+.info-block p {
+  font-size: 0.9375rem;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
