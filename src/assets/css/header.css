@@ -71,7 +71,8 @@
 }
 
 .nav-desktop__link:hover,
-.nav-desktop__link--active {
+.nav-desktop__link--active,
+.nav-desktop__link.is-active {
   border-bottom-color: var(--color-blue);
   text-shadow: 0 0 8px rgba(0, 151, 255, 0.5);
 }
@@ -178,7 +179,8 @@
 }
 
 .nav-mobile__link:hover,
-.nav-mobile__link--active {
+.nav-mobile__link--active,
+.nav-mobile__link.is-active {
   color: var(--color-text-bright);
   text-shadow: 0 0 8px rgba(0, 151, 255, 0.5);
 }
