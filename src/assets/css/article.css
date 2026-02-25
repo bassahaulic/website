@@ -1,0 +1,129 @@
+/* ==========================================================================
+   Article Page Styles
+   ========================================================================== */
+
+/* --- Article Header --- */
+
+.article-header {
+  margin-bottom: var(--space-2xl);
+}
+
+.article-header .tag {
+  margin-bottom: var(--space-md);
+}
+
+.article-header h1 {
+  line-height: 1.15;
+}
+
+/* --- Article Body --- */
+
+.article-body {
+  font-size: clamp(1rem, 2.5vw, 1.125rem);
+  line-height: 1.75;
+  color: var(--color-text);
+}
+
+.article-body p {
+  margin-bottom: var(--space-lg);
+}
+
+.article-lead {
+  font-size: clamp(1.0625rem, 2.5vw, 1.25rem);
+  color: var(--color-text-bright);
+  border-left: 3px solid var(--color-pink);
+  padding-left: var(--space-lg);
+  margin-bottom: var(--space-xl);
+}
+
+/* --- Section Headings --- */
+
+.article-body h2 {
+  margin-top: var(--space-2xl);
+  margin-bottom: var(--space-md);
+  padding-bottom: var(--space-sm);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.article-section-num {
+  display: inline-block;
+  width: 1.75em;
+  height: 1.75em;
+  line-height: 1.75em;
+  text-align: center;
+  font-size: 0.75em;
+  background: var(--color-blue);
+  color: var(--color-bg);
+  border-radius: 50%;
+  margin-right: var(--space-sm);
+  vertical-align: middle;
+}
+
+/* --- Lists --- */
+
+.article-body ul {
+  list-style: none;
+  padding: 0;
+  margin-bottom: var(--space-lg);
+}
+
+.article-body ul li {
+  position: relative;
+  padding-left: var(--space-lg);
+  margin-bottom: var(--space-md);
+}
+
+.article-body ul li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.6em;
+  width: 8px;
+  height: 8px;
+  background: var(--color-blue);
+  border-radius: 50%;
+}
+
+/* --- Callout Boxes --- */
+
+.article-callout {
+  background: rgba(226, 26, 255, 0.05);
+  border: 1px solid rgba(226, 26, 255, 0.25);
+  border-left: 4px solid var(--color-pink);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+  margin-bottom: var(--space-xl);
+}
+
+.article-callout h3 {
+  font-size: 1rem;
+  color: var(--color-pink);
+  margin-bottom: var(--space-sm);
+}
+
+.article-callout p {
+  margin-bottom: var(--space-sm);
+}
+
+.article-callout p:last-child {
+  margin-bottom: 0;
+}
+
+.article-callout--result {
+  background: rgba(0, 151, 255, 0.05);
+  border-color: rgba(0, 151, 255, 0.25);
+  border-left-color: var(--color-blue);
+}
+
+.article-callout--result h3 {
+  color: var(--color-blue);
+}
+
+/* --- Article Footer --- */
+
+.article-footer {
+  margin-top: var(--space-3xl);
+  padding-top: var(--space-lg);
+  border-top: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+}

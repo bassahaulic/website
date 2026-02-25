@@ -30,17 +30,10 @@
   text-decoration: none;
 }
 
-.site-logo img {
+.site-logo__img {
   height: 36px;
   width: auto;
-}
-
-.site-logo__text {
-  font-family: var(--font-heading);
-  font-size: 0.875rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--color-blue);
+  object-fit: contain;
 }
 
 /* --- Desktop Nav --- */
@@ -200,12 +193,8 @@
     padding: var(--space-xl) var(--space-lg);
   }
 
-  .site-logo img {
+  .site-logo__img {
     height: 42px;
-  }
-
-  .site-logo__text {
-    font-size: 1rem;
   }
 
   .nav-toggle__label {
@@ -227,7 +216,7 @@
     display: none;
   }
 
-  .site-logo img {
+  .site-logo__img {
     height: 48px;
   }
 }
