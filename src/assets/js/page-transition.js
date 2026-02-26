@@ -10,8 +10,24 @@
   var mainEl = document.getElementById('main-content');
   if (!mainEl) return;
 
-  // Track page-specific scripts so we can clean them up
+  // Track page-specific resources so we can clean them up
   var activePageScripts = [];
+  var activePageStyles = [];
+
+  // Global resources that should never be duplicated
+  var globalScripts = [
+    '/assets/js/matrix-rain.js',
+    '/assets/js/nav.js',
+    '/assets/js/page-transition.js'
+  ];
+  var globalStyles = [
+    '/assets/css/variables.css',
+    '/assets/css/reset.css',
+    '/assets/css/global.css',
+    '/assets/css/header.css',
+    '/assets/css/footer.css',
+    '/assets/css/components.css'
+  ];
 
   function isInternalLink(a) {
     if (!a || !a.href) return false;
@@ -19,12 +35,14 @@
     if (a.hasAttribute('download')) return false;
     if (a.href.indexOf('mailto:') === 0) return false;
     if (a.href.indexOf('tel:') === 0) return false;
-    // Same origin only
     return a.origin === location.origin;
   }
 
+  function isGlobalResource(src, globalList) {
+    return globalList.some(function (g) { return src.indexOf(g) !== -1; });
+  }
+
   function loadPage(url, pushState) {
-    // Show a subtle loading state
     mainEl.style.opacity = '0.4';
     mainEl.style.transition = 'opacity 150ms ease';
 
@@ -34,14 +52,11 @@
         return res.text();
       })
       .then(function (html) {
-        // Parse the fetched HTML
         var parser = new DOMParser();
         var doc = parser.parseFromString(html, 'text/html');
 
-        // Extract new <main> content
         var newMain = doc.getElementById('main-content');
         if (!newMain) {
-          // Fallback: full page load if no main found
           location.href = url;
           return;
         }
@@ -62,21 +77,42 @@
           currentMeta.setAttribute('content', newMeta.getAttribute('content'));
         }
 
+        // --- Handle page-specific CSS ---
+        // Remove old page-specific styles
+        activePageStyles.forEach(function (link) {
+          link.parentNode.removeChild(link);
+        });
+        activePageStyles = [];
+
+        // Load new page-specific styles
+        var newStyles = doc.querySelectorAll('link[rel="stylesheet"]');
+        newStyles.forEach(function (s) {
+          var href = s.getAttribute('href');
+          if (!href) return;
+          if (isGlobalResource(href, globalStyles)) return;
+          // Check if already loaded
+          if (document.querySelector('link[href="' + href + '"]')) return;
+
+          var link = document.createElement('link');
+          link.rel = 'stylesheet';
+          link.href = href;
+          document.head.appendChild(link);
+          activePageStyles.push(link);
+        });
+
+        // --- Handle page-specific JS ---
         // Remove old page-specific scripts
         activePageScripts.forEach(function (script) {
           script.parentNode.removeChild(script);
         });
         activePageScripts = [];
 
-        // Load new page-specific scripts (extra_js)
+        // Load new page-specific scripts
         var newScripts = doc.querySelectorAll('script[src]');
-        var globalScripts = ['/assets/js/matrix-rain.js', '/assets/js/nav.js'];
-
         newScripts.forEach(function (s) {
           var src = s.getAttribute('src');
-          // Skip global scripts that are already loaded
-          if (globalScripts.some(function (g) { return src.indexOf(g) !== -1; })) return;
-          // Skip live reload script
+          if (!src) return;
+          if (isGlobalResource(src, globalScripts)) return;
           if (src.indexOf('__reload') !== -1) return;
 
           var script = document.createElement('script');
@@ -112,7 +148,6 @@
         }
       })
       .catch(function () {
-        // On error, fall back to normal navigation
         location.href = url;
       });
   }
@@ -133,12 +168,9 @@
     var a = e.target.closest('a');
     if (!a) return;
     if (!isInternalLink(a)) return;
-    // Don't intercept if modifier keys are held (open in new tab, etc.)
     if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
 
     e.preventDefault();
-
-    // Don't reload if already on this page
     if (a.href === location.href) return;
 
     loadPage(a.href, true);
