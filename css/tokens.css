@@ -1,0 +1,94 @@
+/* Design tokens. Re-skin the whole system by editing this file. */
+:root {
+  /* Surfaces */
+  --ds-color-bg:           #0b1014;
+  --ds-color-surface:      #131a22;
+  --ds-color-surface-elev: #1a232c;
+  --ds-color-border:       #283341;
+  --ds-color-border-strong:#3a4756;
+
+  /* Text */
+  --ds-color-text-primary:   #f2f6fa;
+  --ds-color-text-secondary: #a8b3bf;
+  --ds-color-text-disabled:  #5a6573;
+
+  /* Brand */
+  --ds-color-primary:        #2dd4bf;
+  --ds-color-primary-hover:  #14b8a6;
+  --ds-color-primary-pressed:#0f9488;
+
+  --ds-color-secondary:        #60a5fa;
+  --ds-color-secondary-hover:  #3b82f6;
+  --ds-color-secondary-pressed:#2563eb;
+
+  --ds-color-tertiary:        #c084fc;
+  --ds-color-tertiary-hover:  #a855f7;
+  --ds-color-tertiary-pressed:#9333ea;
+
+  --ds-color-warning: #fbbf24;
+  --ds-color-danger:  #f87171;
+  --ds-color-danger-hover: #ef4444;
+  --ds-color-success: #34d399;
+
+  /* Rarity (for badges, like the original) */
+  --ds-color-common:    #9ca3af;
+  --ds-color-rare:      #60a5fa;
+  --ds-color-epic:      #c084fc;
+  --ds-color-legendary: #fbbf24;
+
+  /* Typography */
+  --ds-font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --ds-fs-h1: 32px;
+  --ds-fs-h2: 26px;
+  --ds-fs-h3: 20px;
+  --ds-fs-body1: 16px;
+  --ds-fs-body2: 14px;
+  --ds-fs-caption: 12px;
+  --ds-fw-regular: 400;
+  --ds-fw-medium: 500;
+  --ds-fw-semibold: 600;
+  --ds-fw-bold: 700;
+  --ds-lh-tight: 1.2;
+  --ds-lh-normal: 1.5;
+
+  /* Spacing */
+  --ds-space-1: 4px;
+  --ds-space-2: 8px;
+  --ds-space-3: 12px;
+  --ds-space-4: 16px;
+  --ds-space-5: 24px;
+  --ds-space-6: 32px;
+
+  /* Radii */
+  --ds-radius-sm: 6px;
+  --ds-radius-md: 10px;
+  --ds-radius-lg: 14px;
+  --ds-radius-pill: 999px;
+
+  /* Elevation */
+  --ds-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --ds-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.35);
+  --ds-shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.45);
+
+  /* Motion */
+  --ds-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --ds-dur-fast: 120ms;
+  --ds-dur: 180ms;
+}
+
+/* Light theme override. Toggle by setting <html data-theme="light">. */
+html[data-theme="light"] {
+  --ds-color-bg:           #f6f8fb;
+  --ds-color-surface:      #ffffff;
+  --ds-color-surface-elev: #ffffff;
+  --ds-color-border:       #e3e7ee;
+  --ds-color-border-strong:#cfd5de;
+
+  --ds-color-text-primary:   #0b1220;
+  --ds-color-text-secondary: #4a5568;
+  --ds-color-text-disabled:  #a0aab8;
+
+  --ds-shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
+  --ds-shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
+  --ds-shadow-lg: 0 10px 30px rgba(15, 23, 42, 0.12);
+}
