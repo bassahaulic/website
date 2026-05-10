@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GUI Builder</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/builder.css">
+</head>
+<body class="ds-root">
+  <div id="app">
+    <header class="topbar">
+      <div class="topbar__title">GUI Builder <small>v1</small></div>
+      <div class="topbar__spacer"></div>
+      <div class="topbar__actions">
+        <button id="btn-sample" class="ds-button ds-button--ghost ds-button--sm">Load sample</button>
+        <button id="btn-clear"  class="ds-button ds-button--ghost ds-button--sm">Clear</button>
+        <button id="btn-theme"  class="ds-iconbutton" title="Toggle theme"></button>
+        <button id="btn-export" class="ds-button ds-button--primary ds-button--sm">Export HTML</button>
+      </div>
+    </header>
+
+    <div class="workspace">
+      <aside class="pane pane--palette">
+        <div class="pane__header">Components</div>
+        <div class="pane__body" id="palette"></div>
+      </aside>
+
+      <main class="canvas-wrap">
+        <div class="canvas" id="canvas"></div>
+      </main>
+
+      <aside class="pane pane--inspector">
+        <div class="pane__header">Inspector</div>
+        <div class="pane__body" id="inspector-body"></div>
+      </aside>
+    </div>
+  </div>
+
+  <script type="module" src="js/builder.js"></script>
+</body>
+</html>
