@@ -1,0 +1,11 @@
+rules_version = '2';
+
+// M0: deny everything. Authenticated, organization-scoped permit access lands
+// in M1/M2. Permit URLs must never be permanently public.
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

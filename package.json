@@ -1,0 +1,26 @@
+{
+  "name": "haulpilot",
+  "private": true,
+  "version": "0.1.0",
+  "description": "HaulPilot MVP monorepo: permit-route compliance for oversize/overweight hauls",
+  "scripts": {
+    "lint": "pnpm -r --no-bail lint",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "pnpm -r --no-bail typecheck",
+    "test": "pnpm -r --no-bail test",
+    "build": "pnpm -r --no-bail build",
+    "dev:web": "pnpm --filter @haulpilot/web dev",
+    "dev:driver": "pnpm --filter @haulpilot/driver start",
+    "android": "pnpm --filter @haulpilot/driver android",
+    "emulators": "firebase emulators:start"
+  },
+  "devDependencies": {
+    "firebase-tools": "^13.35.1",
+    "prettier": "^3.5.3"
+  },
+  "packageManager": "pnpm@10.14.0",
+  "engines": {
+    "node": ">=20"
+  }
+}
