@@ -1,0 +1,8 @@
+node_modules/
+dist/
+build/
+.next/
+coverage/
+apps/driver/android/
+apps/driver/ios/
+pnpm-lock.yaml

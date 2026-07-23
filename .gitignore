@@ -1,0 +1,50 @@
+# Dependencies
+node_modules/
+
+# Builds
+dist/
+build/
+.next/
+out/
+*.tsbuildinfo
+next-env.d.ts
+
+# Env files (templates are committed as *.example)
+.env
+.env.local
+.env.*.local
+
+# Firebase
+.firebase/
+firebase-debug.log
+firestore-debug.log
+storage-debug.log
+ui-debug.log
+pubsub-debug.log
+emulator-data/
+
+# Android
+apps/driver/android/app/build/
+apps/driver/android/build/
+apps/driver/android/.gradle/
+apps/driver/android/local.properties
+*.keystore
+!debug.keystore
+
+# iOS (out of MVP scope, ignore artifacts anyway)
+apps/driver/ios/Pods/
+apps/driver/ios/build/
+
+# Metro / RN
+.metro-health-check*
+*.jsbundle
+
+# Test coverage
+coverage/
+
+# Editor / OS
+.DS_Store
+.idea/
+*.swp
+.vscode/*
+!.vscode/extensions.json
