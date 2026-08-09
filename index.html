@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bassahaulic — Enclosure Pricing Tool</title>
+<meta name="description" content="Custom subwoofer enclosure quoting tool for Bassahaulic.">
+<style>
+  :root {
+    --ground: #131518;
+    --surface: #1b1e23;
+    --surface-2: #22262d;
+    --line: #2a2e36;
+    --ink: #eceef1;
+    --muted: #98a0ab;
+    --accent: #ff7a1a;
+    --accent-ink: #1a1205;
+    --accent-soft: rgba(255, 122, 26, 0.12);
+    --good: #4ade80;
+    --warn: #fbbf24;
+    --bad: #f87171;
+    --radius: 8px;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 0 20px 80px; }
+
+  /* ---------- Header ---------- */
+  header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    padding: 28px 0 20px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 24px;
+  }
+  .brand { display: flex; align-items: baseline; gap: 12px; }
+  .brand h1 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .brand h1 span { color: var(--accent); }
+  .brand .tag {
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .header-actions { display: flex; gap: 10px; }
+
+  /* ---------- Layout ---------- */
+  .app { display: grid; grid-template-columns: minmax(0, 1fr) 400px; gap: 24px; align-items: start; }
+  @media (max-width: 980px) { .app { grid-template-columns: 1fr; } }
+
+  /* ---------- Form panels ---------- */
+  fieldset {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--surface);
+    padding: 18px 18px 20px;
+    margin: 0 0 18px;
+  }
+  legend {
+    padding: 2px 10px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--ground);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+  }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; }
+  .field { display: flex; flex-direction: column; gap: 5px; }
+  .field.span-2 { grid-column: span 2; }
+  @media (max-width: 500px) { .field.span-2 { grid-column: span 1; } }
+  label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  input[type="text"], input[type="number"], select {
+    width: 100%;
+    padding: 9px 10px;
+    background: var(--ground);
+    color: var(--ink);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    font-family: var(--sans);
+    font-size: 15px;
+  }
+  input[type="number"] { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+  input:focus-visible, select:focus-visible, button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+  }
+  .check {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 8px 10px;
+    background: var(--ground);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  .check input { accent-color: var(--accent); width: 16px; height: 16px; margin: 0; }
+  .check span { font-size: 13.5px; color: var(--ink); }
+  .check small { display: block; color: var(--muted); font-size: 11.5px; }
+  .checks { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; }
+
+  .hint { font-size: 12px; color: var(--muted); margin: 10px 0 0; }
+
+  /* ---------- Buttons ---------- */
+  button {
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 9px 14px;
+    border-radius: 6px;
+    border: 1px solid var(--line);
+    background: var(--surface-2);
+    color: var(--ink);
+    cursor: pointer;
+  }
+  button:hover { border-color: var(--accent); }
+  button.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  button.primary:hover { filter: brightness(1.08); }
+  button.ghost { background: transparent; }
+
+  /* ---------- Volume readout ---------- */
+  .vol {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+    padding: 12px 14px;
+    background: var(--ground);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+  }
+  .vol .num { font-family: var(--mono); font-variant-numeric: tabular-nums; font-size: 18px; font-weight: 600; }
+  .vol .lbl { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .pill {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 999px;
+    border: 1px solid;
+  }
+  .pill.good { color: var(--good); border-color: var(--good); background: rgba(74, 222, 128, 0.08); }
+  .pill.warn { color: var(--warn); border-color: var(--warn); background: rgba(251, 191, 36, 0.08); }
+  .pill.bad  { color: var(--bad);  border-color: var(--bad);  background: rgba(248, 113, 113, 0.08); }
+
+  /* ---------- Quote panel ---------- */
+  .quote {
+    position: sticky;
+    top: 20px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .quote-head {
+    padding: 16px 18px;
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--line);
+  }
+  .quote-head h2 {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .quote-head .job { color: var(--muted); font-size: 12.5px; margin-top: 2px; }
+  .quote-body { padding: 14px 18px 18px; }
+  .lines { width: 100%; border-collapse: collapse; }
+  .lines td {
+    padding: 6px 0;
+    font-size: 13.5px;
+    border-bottom: 1px dashed var(--line);
+    vertical-align: top;
+  }
+  .lines td.amt {
+    text-align: right;
+    font-family: var(--mono);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    padding-left: 12px;
+  }
+  .lines td small { display: block; color: var(--muted); font-size: 11.5px; }
+  .lines tr.sub td { border-bottom: 1px solid var(--line); font-weight: 600; }
+  .total-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-top: 14px;
+    padding: 14px;
+    background: var(--accent-soft);
+    border: 1px solid var(--accent);
+    border-radius: 6px;
+  }
+  .total-row .lbl { font-size: 12px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; }
+  .total-row .val {
+    font-family: var(--mono);
+    font-variant-numeric: tabular-nums;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--accent);
+  }
+  .deposit { display: flex; justify-content: space-between; margin-top: 8px; font-size: 13px; color: var(--muted); }
+  .deposit .val { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+  .quote-actions { display: flex; gap: 10px; margin-top: 16px; }
+  .quote-actions button { flex: 1; }
+
+  /* ---------- Settings drawer ---------- */
+  dialog {
+    background: var(--surface);
+    color: var(--ink);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    max-width: 620px;
+    width: calc(100vw - 40px);
+    padding: 0;
+  }
+  dialog::backdrop { background: rgba(0, 0, 0, 0.6); }
+  .dlg-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--line);
+  }
+  .dlg-head h2 { margin: 0; font-size: 14px; letter-spacing: 0.12em; text-transform: uppercase; }
+  .dlg-body { padding: 18px 20px; max-height: 65vh; overflow-y: auto; }
+  .dlg-body h3 {
+    margin: 18px 0 10px;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .dlg-body h3:first-child { margin-top: 0; }
+  .dlg-foot {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 14px 20px;
+    border-top: 1px solid var(--line);
+  }
+
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--surface-2);
+    border: 1px solid var(--accent);
+    color: var(--ink);
+    padding: 10px 18px;
+    border-radius: 6px;
+    font-size: 13.5px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s;
+  }
+  .toast.show { opacity: 1; }
+  @media (prefers-reduced-motion: reduce) { .toast { transition: none; } }
+
+  /* ---------- Print: quote only, light ---------- */
+  @media print {
+    body { background: #fff; color: #111; font-size: 13px; }
+    header, .form-col, .quote-actions, .toast { display: none !important; }
+    .wrap { padding: 0; max-width: none; }
+    .app { display: block; }
+    .quote { position: static; border: none; background: #fff; }
+    .quote-head { background: #fff; border-bottom: 2px solid #111; padding: 0 0 10px; }
+    .quote-head h2 { font-size: 18px; color: #111; }
+    .quote-head .job { color: #444; }
+    .quote-body { padding: 12px 0 0; }
+    .lines td { border-bottom: 1px dashed #bbb; color: #111; }
+    .lines td small { color: #555; }
+    .lines tr.sub td { border-bottom: 1px solid #111; }
+    .total-row { background: #fff; border: 2px solid #111; }
+    .total-row .val { color: #111; }
+    .deposit { color: #444; }
+    .print-only { display: block !important; }
+  }
+  .print-only { display: none; font-size: 11.5px; color: #555; margin-top: 18px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="brand">
+      <h1>Bassa<span>haulic</span></h1>
+      <div class="tag">Enclosure Pricing Tool</div>
+    </div>
+    <div class="header-actions">
+      <button class="ghost" id="btn-settings" type="button">Shop rates</button>
+    </div>
+  </header>
+
+  <div class="app">
+    <div class="form-col">
+
+      <fieldset>
+        <legend>Job</legend>
+        <div class="grid">
+          <div class="field span-2">
+            <label for="customer">Customer / vehicle</label>
+            <input type="text" id="customer" placeholder="e.g. Mike R. — 2019 Silverado crew cab">
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Subwoofers</legend>
+        <div class="grid">
+          <div class="field">
+            <label for="subSize">Sub size</label>
+            <select id="subSize">
+              <option value="8">8&quot;</option>
+              <option value="10">10&quot;</option>
+              <option value="12" selected>12&quot;</option>
+              <option value="15">15&quot;</option>
+              <option value="18">18&quot;</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="subCount">Quantity</label>
+            <select id="subCount">
+              <option>1</option><option selected>2</option><option>3</option><option>4</option>
+              <option>5</option><option>6</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="boxType">Enclosure type</label>
+            <select id="boxType">
+              <option value="sealed">Sealed</option>
+              <option value="ported" selected>Ported (slot)</option>
+              <option value="bandpass">Bandpass (4th order)</option>
+            </select>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Box dimensions (external, inches)</legend>
+        <div class="grid">
+          <div class="field">
+            <label for="dimW">Width</label>
+            <input type="number" id="dimW" value="32" min="6" step="0.25">
+          </div>
+          <div class="field">
+            <label for="dimH">Height</label>
+            <input type="number" id="dimH" value="15" min="6" step="0.25">
+          </div>
+          <div class="field">
+            <label for="dimD">Depth</label>
+            <input type="number" id="dimD" value="18" min="6" step="0.25">
+          </div>
+          <div class="field">
+            <label>&nbsp;</label>
+            <button type="button" id="btn-autosize">Auto-size box</button>
+          </div>
+        </div>
+        <div class="vol" id="volReadout"></div>
+        <p class="hint">Auto-size picks dimensions that hit the recommended airspace for the selected subs and enclosure type. Net volume accounts for wall thickness, sub displacement, and port displacement.</p>
+      </fieldset>
+
+      <fieldset>
+        <legend>Material</legend>
+        <div class="grid">
+          <div class="field">
+            <label for="material">Sheet stock</label>
+            <select id="material">
+              <option value="mdf34" selected>3/4&quot; MDF</option>
+              <option value="mdf1">1&quot; MDF</option>
+              <option value="birch34">3/4&quot; Baltic birch</option>
+            </select>
+          </div>
+        </div>
+        <div class="checks" style="margin-top: 12px;">
+          <label class="check"><input type="checkbox" id="optDouble"><span>Double baffle<small>Second front layer for high power</small></span></label>
+          <label class="check"><input type="checkbox" id="optBracing"><span>Internal bracing<small>Window bracing / dowels</small></span></label>
+          <label class="check"><input type="checkbox" id="optKerf"><span>Kerfed port<small>Rounded 45&deg; port entry</small></span></label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Finish &amp; extras</legend>
+        <div class="grid">
+          <div class="field">
+            <label for="finish">Finish</label>
+            <select id="finish">
+              <option value="raw">Raw (no finish)</option>
+              <option value="carpet" selected>Carpet</option>
+              <option value="bedliner">Spray liner</option>
+              <option value="paint">Paint / gloss</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="designFee">Custom design fee ($)</label>
+            <input type="number" id="designFee" value="0" min="0" step="5">
+          </div>
+        </div>
+        <div class="checks" style="margin-top: 12px;">
+          <label class="check"><input type="checkbox" id="optTerminal" checked><span>Terminal cup + wiring<small>Speaker terminal, internal wiring</small></span></label>
+          <label class="check"><input type="checkbox" id="optLed"><span>LED lighting<small>RGB ring / strip kit</small></span></label>
+          <label class="check"><input type="checkbox" id="optPlexi"><span>Plexi window<small>Clear acrylic panel</small></span></label>
+          <label class="check"><input type="checkbox" id="optRush"><span>Rush job<small>Front of the build queue</small></span></label>
+        </div>
+      </fieldset>
+
+    </div>
+
+    <aside class="quote" aria-label="Quote">
+      <div class="quote-head">
+        <h2>Quote</h2>
+        <div class="job" id="quoteJob"></div>
+      </div>
+      <div class="quote-body">
+        <table class="lines"><tbody id="quoteLines"></tbody></table>
+        <div class="total-row">
+          <span class="lbl">Total</span>
+          <span class="val" id="quoteTotal">$0</span>
+        </div>
+        <div class="deposit">
+          <span>Deposit to start (50%)</span>
+          <span class="val" id="quoteDeposit">$0</span>
+        </div>
+        <div class="quote-actions">
+          <button type="button" id="btn-copy">Copy</button>
+          <button type="button" class="primary" id="btn-print">Print quote</button>
+        </div>
+        <div class="print-only" id="printFooter"></div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<dialog id="settingsDlg">
+  <div class="dlg-head">
+    <h2>Shop rates</h2>
+    <button type="button" class="ghost" id="btn-close-settings">Close</button>
+  </div>
+  <div class="dlg-body">
+    <h3>Labor</h3>
+    <div class="grid">
+      <div class="field"><label for="cfg-laborRate">Shop rate ($/hr)</label><input type="number" id="cfg-laborRate" min="0" step="5"></div>
+      <div class="field"><label for="cfg-rushPct">Rush surcharge (%)</label><input type="number" id="cfg-rushPct" min="0" step="5"></div>
+      <div class="field"><label for="cfg-marginPct">Shop margin (%)</label><input type="number" id="cfg-marginPct" min="0" step="1"></div>
+      <div class="field"><label for="cfg-minPrice">Minimum job ($)</label><input type="number" id="cfg-minPrice" min="0" step="10"></div>
+    </div>
+    <h3>Sheet stock (4&times;8 sheet)</h3>
+    <div class="grid">
+      <div class="field"><label for="cfg-mdf34">3/4&quot; MDF ($)</label><input type="number" id="cfg-mdf34" min="0" step="1"></div>
+      <div class="field"><label for="cfg-mdf1">1&quot; MDF ($)</label><input type="number" id="cfg-mdf1" min="0" step="1"></div>
+      <div class="field"><label for="cfg-birch34">3/4&quot; birch ($)</label><input type="number" id="cfg-birch34" min="0" step="1"></div>
+      <div class="field"><label for="cfg-wastePct">Cut waste (%)</label><input type="number" id="cfg-wastePct" min="0" step="1"></div>
+    </div>
+    <h3>Finish</h3>
+    <div class="grid">
+      <div class="field"><label for="cfg-carpetSqft">Carpet ($/sq ft)</label><input type="number" id="cfg-carpetSqft" min="0" step="0.25"></div>
+      <div class="field"><label for="cfg-bedliner">Spray liner ($ flat)</label><input type="number" id="cfg-bedliner" min="0" step="5"></div>
+      <div class="field"><label for="cfg-paint">Paint ($ flat)</label><input type="number" id="cfg-paint" min="0" step="5"></div>
+    </div>
+    <h3>Hardware &amp; extras</h3>
+    <div class="grid">
+      <div class="field"><label for="cfg-terminal">Terminal + wiring ($)</label><input type="number" id="cfg-terminal" min="0" step="1"></div>
+      <div class="field"><label for="cfg-consumables">Glue / screws / caulk ($)</label><input type="number" id="cfg-consumables" min="0" step="1"></div>
+      <div class="field"><label for="cfg-led">LED kit ($)</label><input type="number" id="cfg-led" min="0" step="1"></div>
+      <div class="field"><label for="cfg-plexi">Plexi panel ($)</label><input type="number" id="cfg-plexi" min="0" step="1"></div>
+    </div>
+    <p class="hint">Rates are saved in this browser only. Prices update live as you type.</p>
+  </div>
+  <div class="dlg-foot">
+    <button type="button" class="ghost" id="btn-reset-settings">Reset to defaults</button>
+    <button type="button" class="primary" id="btn-done-settings">Done</button>
+  </div>
+</dialog>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+"use strict";
+
+/* ---------------- Shop configuration ---------------- */
+
+const DEFAULT_CONFIG = {
+  laborRate: 85,      // $/hr
+  rushPct: 25,        // % surcharge on the whole job
+  marginPct: 20,      // % margin on subtotal
+  minPrice: 150,      // minimum job total
+  wastePct: 15,       // sheet cut waste
+  mdf34: 65,          // per 4x8 sheet
+  mdf1: 105,
+  birch34: 115,
+  carpetSqft: 2.5,    // per sq ft of external surface
+  bedliner: 75,       // flat
+  paint: 110,         // flat
+  terminal: 12,
+  consumables: 18,
+  led: 30,
+  plexi: 55
+};
+
+const CONFIG_KEY = "bassahaulic-pricing-config-v1";
+
+function loadConfig() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(CONFIG_KEY));
+    return { ...DEFAULT_CONFIG, ...(saved || {}) };
+  } catch (e) {
+    return { ...DEFAULT_CONFIG };
+  }
+}
+
+let config = loadConfig();
+
+function saveConfig() {
+  localStorage.setItem(CONFIG_KEY, JSON.stringify(config));
+}
+
+/* ---------------- Reference data ---------------- */
+
+// Per-sub data: cutout diameter, frame width, driver displacement (cu ft),
+// recommended net airspace per sub (cu ft) for sealed / ported builds.
+const SUBS = {
+  8:  { frame: 9.6,  disp: 0.06, sealed: 0.6,  ported: 1.0,  depth: 14 },
+  10: { frame: 11.6, disp: 0.08, sealed: 0.9,  ported: 1.6,  depth: 15 },
+  12: { frame: 13.5, disp: 0.11, sealed: 1.25, ported: 2.25, depth: 16 },
+  15: { frame: 16.5, disp: 0.17, sealed: 2.2,  ported: 3.75, depth: 18 },
+  18: { frame: 19.8, disp: 0.24, sealed: 4.0,  ported: 6.0,  depth: 21 }
+};
+
+// Base build hours by enclosure type, before per-sub and option time.
+const BASE_HOURS = { sealed: 2.5, ported: 4.5, bandpass: 7 };
+
+// Extra sheet material consumed by port walls / bandpass divider, as a
+// fraction of the basic six-panel area.
+const PORT_MATERIAL_FACTOR = { sealed: 0, ported: 0.15, bandpass: 0.3 };
+
+// Port displacement as a fraction of gross internal volume.
+const PORT_DISPLACEMENT = { sealed: 0, ported: 0.15, bandpass: 0.25 };
+
+const MATERIALS = {
+  mdf34:   { label: '3/4" MDF',          thickness: 0.75, priceKey: "mdf34" },
+  mdf1:    { label: '1" MDF',            thickness: 1.0,  priceKey: "mdf1" },
+  birch34: { label: '3/4" Baltic birch', thickness: 0.75, priceKey: "birch34" }
+};
+
+const FINISH_HOURS = { raw: 0, carpet: 1.5, bedliner: 2, paint: 3 };
+const FINISH_LABELS = { raw: "Raw", carpet: "Carpet", bedliner: "Spray liner", paint: "Paint / gloss" };
+
+/* ---------------- Input helpers ---------------- */
+
+const $ = (id) => document.getElementById(id);
+
+function readSpec() {
+  return {
+    customer: $("customer").value.trim(),
+    subSize: parseInt($("subSize").value, 10),
+    subCount: parseInt($("subCount").value, 10),
+    boxType: $("boxType").value,
+    w: parseFloat($("dimW").value) || 0,
+    h: parseFloat($("dimH").value) || 0,
+    d: parseFloat($("dimD").value) || 0,
+    material: $("material").value,
+    double: $("optDouble").checked,
+    bracing: $("optBracing").checked,
+    kerf: $("optKerf").checked,
+    finish: $("finish").value,
+    designFee: parseFloat($("designFee").value) || 0,
+    terminal: $("optTerminal").checked,
+    led: $("optLed").checked,
+    plexi: $("optPlexi").checked,
+    rush: $("optRush").checked
+  };
+}
+
+/* ---------------- Enclosure math ---------------- */
+
+function volumeInfo(spec) {
+  const t = MATERIALS[spec.material].thickness;
+  const baffle = spec.double ? 2 * t : t;
+  const iw = spec.w - 2 * t;
+  const ih = spec.h - 2 * t;
+  const id = spec.d - t - baffle;
+  const sub = SUBS[spec.subSize];
+
+  const gross = iw > 0 && ih > 0 && id > 0 ? (iw * ih * id) / 1728 : 0;
+  const portVol = gross * PORT_DISPLACEMENT[spec.boxType];
+  const braceVol = spec.bracing ? gross * 0.03 : 0;
+  const net = Math.max(0, gross - portVol - braceVol - sub.disp * spec.subCount);
+
+  const recPer = spec.boxType === "sealed" ? sub.sealed : sub.ported;
+  const rec = recPer * spec.subCount;
+
+  let status = "good";
+  if (net < rec * 0.85) status = "small";
+  else if (net > rec * 1.3) status = "large";
+
+  return { gross, net, rec, status, thickness: t };
+}
+
+function autoSize() {
+  const spec = readSpec();
+  const sub = SUBS[spec.subSize];
+  const t = MATERIALS[spec.material].thickness;
+  const baffle = spec.double ? 2 * t : t;
+
+  // Baffle must fit the subs in a row with breathing room.
+  const perRow = spec.subCount <= 3 ? spec.subCount : Math.ceil(spec.subCount / 2);
+  const rows = Math.ceil(spec.subCount / perRow);
+  const w = Math.round((perRow * (sub.frame + 1.5) + 3) * 4) / 4;
+  let d = sub.depth + (spec.boxType === "ported" ? 4 : 0) + (spec.boxType === "bandpass" ? 6 : 0);
+
+  // Solve height for target net volume.
+  const recPer = spec.boxType === "sealed" ? sub.sealed : sub.ported;
+  const targetNet = recPer * spec.subCount;
+  const portFrac = PORT_DISPLACEMENT[spec.boxType];
+  const braceFrac = spec.bracing ? 0.03 : 0;
+  const targetGross = (targetNet + sub.disp * spec.subCount) / (1 - portFrac - braceFrac);
+
+  const iw = w - 2 * t;
+  let ih = (targetGross * 1728) / (iw * (d - t - baffle));
+  const minH = rows * (sub.frame + 1.5) + 2;
+  let h = Math.max(ih + 2 * t, minH);
+
+  // If driver fit forced the box taller than the volume needs, pull depth
+  // back in instead — down to magnet clearance — so small builds don't
+  // come out oversized.
+  if (h === minH) {
+    const minDepth = Math.ceil(sub.depth * 0.75 * 4) / 4;
+    const needed = (targetGross * 1728) / (iw * (h - 2 * t)) + t + baffle;
+    d = Math.max(minDepth, Math.min(d, needed));
+  }
+  h = Math.ceil(h * 4) / 4;
+
+  $("dimW").value = w;
+  $("dimH").value = h;
+  $("dimD").value = Math.round(d * 4) / 4;
+  update();
+  showToast("Box sized for " + spec.subCount + " × " + spec.subSize + '" ' + spec.boxType);
+}
+
+/* ---------------- Pricing ---------------- */
+
+function money(n) {
+  return "$" + n.toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+}
+
+function computeQuote(spec) {
+  const mat = MATERIALS[spec.material];
+  const vol = volumeInfo(spec);
+  const lines = [];
+
+  // --- Sheet material ---
+  const panelSqft =
+    (2 * (spec.w * spec.h) + 2 * (spec.w * spec.d) + 2 * (spec.h * spec.d)) / 144;
+  let matSqft = panelSqft;
+  if (spec.double) matSqft += (spec.w * spec.h) / 144;
+  matSqft *= 1 + PORT_MATERIAL_FACTOR[spec.boxType];
+  if (spec.bracing) matSqft *= 1.1;
+  matSqft *= 1 + config.wastePct / 100;
+
+  const sheets = Math.max(1, Math.ceil(matSqft / 32));
+  const sheetPrice = config[mat.priceKey];
+  const materialCost = sheets * sheetPrice;
+  lines.push({
+    label: "Sheet material",
+    detail: sheets + " sheet" + (sheets > 1 ? "s" : "") + " • " + mat.label,
+    amount: materialCost
+  });
+
+  // --- Labor ---
+  let hours = BASE_HOURS[spec.boxType];
+  hours += 0.5 * spec.subCount;           // cutouts, test fit
+  if (spec.kerf) hours += 1.5;
+  if (spec.bracing) hours += 1;
+  if (spec.double) hours += 0.75;
+  if (spec.plexi) hours += 1;
+  if (spec.led) hours += 0.75;
+  hours += FINISH_HOURS[spec.finish];
+  hours = Math.round(hours * 4) / 4;
+  const laborCost = hours * config.laborRate;
+  lines.push({
+    label: "Build labor",
+    detail: hours + " hrs @ " + money(config.laborRate) + "/hr",
+    amount: laborCost
+  });
+
+  // --- Finish materials ---
+  if (spec.finish === "carpet") {
+    const carpetCost = panelSqft * 1.25 * config.carpetSqft; // overlap + wrap allowance
+    lines.push({ label: "Carpet", detail: Math.ceil(panelSqft * 1.25) + " sq ft", amount: carpetCost });
+  } else if (spec.finish === "bedliner") {
+    lines.push({ label: "Spray liner", detail: "materials", amount: config.bedliner });
+  } else if (spec.finish === "paint") {
+    lines.push({ label: "Paint / gloss", detail: "materials", amount: config.paint });
+  }
+
+  // --- Hardware & extras ---
+  let hardware = config.consumables;
+  const hwBits = ["glue + fasteners"];
+  if (spec.terminal) { hardware += config.terminal; hwBits.push("terminal + wiring"); }
+  if (spec.led) { hardware += config.led; hwBits.push("LED kit"); }
+  if (spec.plexi) { hardware += config.plexi; hwBits.push("plexi panel"); }
+  lines.push({ label: "Hardware", detail: hwBits.join(", "), amount: hardware });
+
+  if (spec.designFee > 0) {
+    lines.push({ label: "Custom design", detail: "layout & modeling", amount: spec.designFee });
+  }
+
+  // --- Totals ---
+  let subtotal = lines.reduce((s, l) => s + l.amount, 0);
+  const margin = subtotal * (config.marginPct / 100);
+  let total = subtotal + margin;
+  let rushAmt = 0;
+  if (spec.rush) {
+    rushAmt = total * (config.rushPct / 100);
+    total += rushAmt;
+  }
+  total = Math.max(total, config.minPrice);
+  total = Math.ceil(total / 5) * 5;
+
+  return { lines, subtotal, margin, rushAmt, total, vol, hours, sheets };
+}
+
+/* ---------------- Render ---------------- */
+
+function statusPill(vol) {
+  if (vol.status === "good") return '<span class="pill good">On target</span>';
+  if (vol.status === "small") return '<span class="pill bad">Under target</span>';
+  return '<span class="pill warn">Over target</span>';
+}
+
+function esc(s) {
+  return s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+}
+
+function update() {
+  const spec = readSpec();
+  const q = computeQuote(spec);
+
+  // Volume readout
+  $("volReadout").innerHTML =
+    '<div><div class="num">' + q.vol.net.toFixed(2) + ' ft³</div><div class="lbl">Net volume</div></div>' +
+    '<div><div class="num">' + q.vol.rec.toFixed(2) + ' ft³</div><div class="lbl">Recommended</div></div>' +
+    statusPill(q.vol);
+
+  // Quote header
+  const desc =
+    spec.subCount + " × " + spec.subSize + '" • ' +
+    spec.boxType + " • " +
+    spec.w + '"W × ' + spec.h + '"H × ' + spec.d + '"D';
+  $("quoteJob").innerHTML =
+    (spec.customer ? esc(spec.customer) + "<br>" : "") + desc;
+
+  // Lines
+  let html = "";
+  for (const l of q.lines) {
+    html +=
+      "<tr><td>" + esc(l.label) + "<small>" + esc(l.detail) + "</small></td>" +
+      '<td class="amt">' + money(l.amount) + "</td></tr>";
+  }
+  html += '<tr class="sub"><td>Subtotal</td><td class="amt">' + money(q.subtotal) + "</td></tr>";
+  html += "<tr><td>Shop margin<small>" + config.marginPct + "%</small></td><td class=\"amt\">" + money(q.margin) + "</td></tr>";
+  if (q.rushAmt > 0) {
+    html += "<tr><td>Rush<small>" + config.rushPct + "%</small></td><td class=\"amt\">" + money(q.rushAmt) + "</td></tr>";
+  }
+  $("quoteLines").innerHTML = html;
+
+  $("quoteTotal").textContent = money(q.total);
+  $("quoteDeposit").textContent = money(Math.ceil(q.total / 2 / 5) * 5);
+  $("printFooter").textContent =
+    "Bassahaulic • quote generated " + new Date().toLocaleDateString() +
+    " • valid 30 days • 50% deposit starts the build";
+}
+
+/* ---------------- Copy summary ---------------- */
+
+function copySummary() {
+  const spec = readSpec();
+  const q = computeQuote(spec);
+  const out = [];
+  out.push("BASSAHAULIC — ENCLOSURE QUOTE");
+  if (spec.customer) out.push(spec.customer);
+  out.push(
+    spec.subCount + 'x ' + spec.subSize + '" ' + spec.boxType +
+    " — " + spec.w + "W x " + spec.h + "H x " + spec.d + "D (external)"
+  );
+  out.push(
+    "Net volume " + q.vol.net.toFixed(2) + " cu ft (rec " + q.vol.rec.toFixed(2) + ")"
+  );
+  out.push("");
+  for (const l of q.lines) out.push(l.label + " (" + l.detail + "): " + money(l.amount));
+  out.push("Shop margin: " + money(q.margin));
+  if (q.rushAmt > 0) out.push("Rush: " + money(q.rushAmt));
+  out.push("TOTAL: " + money(q.total));
+  out.push("Deposit to start: " + money(Math.ceil(q.total / 2 / 5) * 5));
+
+  navigator.clipboard.writeText(out.join("\n")).then(
+    () => showToast("Quote copied to clipboard"),
+    () => showToast("Couldn't copy — select and copy manually")
+  );
+}
+
+/* ---------------- Settings ---------------- */
+
+const CFG_FIELDS = Object.keys(DEFAULT_CONFIG);
+
+function fillSettings() {
+  for (const k of CFG_FIELDS) $("cfg-" + k).value = config[k];
+}
+
+function bindSettings() {
+  for (const k of CFG_FIELDS) {
+    $("cfg-" + k).addEventListener("input", (e) => {
+      const v = parseFloat(e.target.value);
+      if (!isNaN(v) && v >= 0) {
+        config[k] = v;
+        saveConfig();
+        update();
+      }
+    });
+  }
+}
+
+/* ---------------- Toast ---------------- */
+
+let toastTimer;
+function showToast(msg) {
+  const t = $("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove("show"), 2600);
+}
+
+/* ---------------- Wire up ---------------- */
+
+document.querySelectorAll("input, select").forEach((el) => {
+  if (!el.id.startsWith("cfg-")) el.addEventListener("input", update);
+});
+$("btn-autosize").addEventListener("click", autoSize);
+$("btn-copy").addEventListener("click", copySummary);
+$("btn-print").addEventListener("click", () => window.print());
+
+const dlg = $("settingsDlg");
+$("btn-settings").addEventListener("click", () => { fillSettings(); dlg.showModal(); });
+$("btn-close-settings").addEventListener("click", () => dlg.close());
+$("btn-done-settings").addEventListener("click", () => dlg.close());
+$("btn-reset-settings").addEventListener("click", () => {
+  config = { ...DEFAULT_CONFIG };
+  saveConfig();
+  fillSettings();
+  update();
+  showToast("Rates reset to defaults");
+});
+
+bindSettings();
+update();
+</script>
+</body>
+</html>
