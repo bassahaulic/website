@@ -30,7 +30,7 @@ const DSO_DATA = [
 [265.08,-32.25,4.2,"Butterfly Cluster (M6)","Open cluster"],
 [97.98,4.95,4.8,"Rosette Cluster","Open cluster"],
 [270.93,-24.383,5,"Lagoon Nebula (M8)","Nebula"],
-[83.82,-26.533,5.4,"M4 Cluster","Globular cluster"],
+[245.897,-26.526,5.4,"M4 Cluster","Globular cluster"],
 [23.475,30.65,5.7,"Triangulum Galaxy (M33)","Galaxy"],
 [274.695,-13.783,6,"Eagle Nebula (M16)","Nebula"]
 ];

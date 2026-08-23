@@ -105,7 +105,7 @@
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
     state.needsRender = true;
   }
-  window.addEventListener('resize', resize);
+  window.addEventListener('resize', () => { resize(); invalidate(); });
   resize();
 
   // per-frame view data
@@ -192,6 +192,12 @@
     const jde = A.jdeFromJd(A.jdFromMs(t));
     eph.sun = A.sunPosition(jde);
     eph.moon = A.moonPosition(jde);
+    // Topocentric correction: lunar parallax shifts the apparent place by up to
+    // ~1° against the stars; every other body is <0.003° so only the Moon needs it.
+    // (Rise/set solvers keep the geocentric position: h0=+0.125° accounts for it.)
+    const tp = A.topocentric(eph.moon.ra, eph.moon.dec, eph.moon.dist,
+      A.lst(A.jdFromMs(t), lon()), lat());
+    eph.moon.ra = tp.ra; eph.moon.dec = tp.dec; eph.moon.dist = tp.dist;
     eph.planets = A.planetPositions(jde);
   }
 
@@ -285,7 +291,9 @@
       for (let i = 0; i < seg.length / 3; i++) {
         const v = transform(view.M2000, seg[i * 3], seg[i * 3 + 1], seg[i * 3 + 2]);
         const p = project(v);
-        if (p && p.alt < -0.6) { prev = null; continue; }  // don't draw underground
+        // p.f < 0.05: >87° from the view center — never visible even at max FOV,
+        // and near the antipode the projection explodes into screen-crossing chords
+        if (p && (p.alt < -0.6 || p.f < 0.05)) { prev = null; continue; }
         if (p && prev) { ctx.moveTo(prev.x, prev.y); ctx.lineTo(p.x, p.y); }
         prev = p;
       }
@@ -406,7 +414,8 @@
   function drawSunMoon() {
     // Sun
     const sv = transform(view.Mdate, ...A.raDecToVec(eph.sun.ra, eph.sun.dec));
-    const sp = project(sv);
+    let sp = project(sv);
+    if (sp && sp.f < 0.05) sp = null; // >87° off-center: invisible, and unusable for light direction
     const sunR = Math.max(7, view.S * 2 * Math.tan(0.267 * D2R / 2) * 2);
     if (sp) {
       const dim = dimFor(sp.alt);
@@ -488,6 +497,7 @@
     let prev = null;
     for (let az = 0; az <= 360; az += 2) {
       const p = project(azAltVec(az, 0));
+      if (p && p.f < 0.05) { prev = null; continue; } // see drawConstellations
       if (p && prev) { ctx.moveTo(prev.x, prev.y); ctx.lineTo(p.x, p.y); }
       prev = p;
     }
@@ -580,7 +590,6 @@
   const pointers = new Map();
   let pinchStart = null;
   let tapCandidate = null;
-  let lastTapTime = 0;
 
   canvas.addEventListener('pointerdown', (e) => {
     canvas.setPointerCapture(e.pointerId);
@@ -627,14 +636,7 @@
     pointers.delete(e.pointerId);
     if (pointers.size < 2) pinchStart = null;
     if (e.type === 'pointerup' && tapCandidate && performance.now() - tapCandidate.t < 400) {
-      const nowT = performance.now();
-      if (nowT - lastTapTime < 300) {
-        state.fov = Math.min(150, Math.max(8, state.fov / 1.6)); // double-tap zoom
-        invalidate();
-      } else {
-        handleTap(tapCandidate.x, tapCandidate.y);
-      }
-      lastTapTime = nowT;
+      handleTap(tapCandidate.x, tapCandidate.y); // pinch zooms; no double-tap, so taps stay instant
     }
     tapCandidate = null;
   }
@@ -673,7 +675,12 @@
     if (rise !== null && (set === null || rise < set)) parts.push(`Rises ${fmtTime(rise)}`);
     if (set !== null) parts.push(`Sets ${fmtTime(set)}`);
     if (rise !== null && set !== null && rise > set) parts.push(`rises again ${fmtTime(rise)}`);
-    if (!parts.length) return '';
+    if (!parts.length) {
+      // no crossings at this latitude: circumpolar or never rises
+      const pos = posFn(A.jdeFromJd(A.jdFromMs(t)));
+      const alt = A.altAz(pos.ra, pos.dec, A.lst(A.jdFromMs(t), lon()), lat()).alt;
+      return alt > h0 ? 'Circumpolar — never sets here' : 'Never rises at this latitude';
+    }
     return parts.join(' · ');
   }
 
@@ -743,28 +750,30 @@
 
   // ---------------- compass (point-at-sky) mode ----------------
 
-  const compass = { az: null, alt: null, smoothAz: null, smoothAlt: null, gotEvent: false, attached: false };
+  const compass = { az: null, alt: null, smoothAz: null, smoothAlt: null, gotEvent: false, attached: false, warnedRelative: false };
 
   function orientationHandler(e) {
-    let az, alt;
+    if (e.alpha === null || e.alpha === undefined) {
+      if (e.webkitCompassHeading === undefined || e.webkitCompassHeading === null) return;
+    }
+    // W3C ZXY intrinsic rotation; derive where the BACK of the phone (device −z) points
+    const _z = (e.alpha || 0) * D2R, _x = (e.beta || 0) * D2R, _y = (e.gamma || 0) * D2R;
+    const cX = Math.cos(_x), cY = Math.cos(_y), cZ = Math.cos(_z);
+    const sX = Math.sin(_x), sY = Math.sin(_y), sZ = Math.sin(_z);
+    const m13 = cY * sZ * sX + cZ * sY;
+    const m23 = sZ * sY - cZ * cY * sX;
+    const m33 = cX * cY;
+    let az = A.rev(Math.atan2(-m13, -m23) * R2D);
+    const alt = Math.asin(Math.max(-1, Math.min(1, -m33))) * R2D;
     if (e.webkitCompassHeading !== undefined && e.webkitCompassHeading !== null) {
-      // iOS: heading of the device top; combined with tilt from beta/gamma
-      const b = (e.beta || 0) * D2R, g = (e.gamma || 0) * D2R;
-      alt = Math.asin(Math.max(-1, Math.min(1, -Math.cos(b) * Math.cos(g)))) * R2D;
-      az = e.webkitCompassHeading;
-    } else {
-      if (e.alpha === null || e.alpha === undefined) return;
-      const _z = e.alpha * D2R, _x = (e.beta || 0) * D2R, _y = (e.gamma || 0) * D2R;
-      const cX = Math.cos(_x), cY = Math.cos(_y), cZ = Math.cos(_z);
-      const sX = Math.sin(_x), sY = Math.sin(_y), sZ = Math.sin(_z);
-      // W3C ZXY intrinsic rotation; columns map device axes → earth (E, N, Up)
-      const m13 = cY * sZ * sX + cZ * sY;
-      const m23 = sZ * sY - cZ * cY * sX;
-      const m33 = cX * cY;
-      // direction the BACK of the phone points (device −z) in earth frame
-      const dE = -m13, dN = -m23, dU = -m33;
-      az = A.rev(Math.atan2(dE, dN) * R2D);
-      alt = Math.asin(Math.max(-1, Math.min(1, dU))) * R2D;
+      // iOS: alpha is arbitrary-origin. Yaw-align the relative frame to true compass
+      // heading of the device top (+y), which is what webkitCompassHeading reports.
+      if (Math.abs(cX) < 0.05) return; // phone ~vertical: top heading degenerate, keep last value
+      const topHeadingRel = Math.atan2(-cX * sZ, cX * cZ) * R2D;
+      az = A.rev(az + (e.webkitCompassHeading - topHeadingRel));
+    } else if (e.absolute === false && !compass.warnedRelative) {
+      compass.warnedRelative = true;
+      toast('No true compass on this browser — north may be offset');
     }
     compass.az = az;
     compass.alt = alt;
@@ -820,8 +829,10 @@
           if (res !== 'granted') { toast('Motion access denied'); return; }
         } catch (e) { toast('Motion access unavailable'); return; }
       }
+      if (!window.isSecureContext) toast('Compass needs HTTPS');
       attachOrientation();
       compass.gotEvent = false;
+      compass.warnedRelative = false;
       state.compass = true;
       btnCompass.classList.add('active');
       toast('Point your phone at the sky 🌌');
@@ -1117,27 +1128,57 @@
 
     const sunset = next(base, sunFn, -0.8333, 'set');
     const sunrise = sunset !== null ? next(sunset, sunFn, -0.8333, 'rise') : null;
+    let polarDay = false;
     if (sunset !== null) {
       rows.push(row('🌇', `Sunset ${fmtTime(sunset)}`, sunrise !== null ? `Sunrise ${fmtTime(sunrise)}` : ''));
     } else {
-      rows.push(row('🌇', 'The Sun does not set today', 'Polar day at this latitude'));
+      // no crossing all day: the sun's noon altitude tells polar day from polar night
+      const jdBase = A.jdFromMs(base);
+      const sp = A.sunPosition(A.jdeFromJd(jdBase));
+      polarDay = A.altAz(sp.ra, sp.dec, A.lst(jdBase, state.lon), state.lat).alt > -0.8333;
+      if (polarDay) rows.push(row('🌇', 'The Sun does not set today', 'Polar day at this latitude'));
+      else rows.push(row('🌇', 'The Sun does not rise today', 'Polar night at this latitude'));
     }
     const eveRef = sunset !== null ? sunset : base + 7 * 3600000;
-    const darkStart = next(eveRef, sunFn, -18, 'set');
-    const darkEnd = darkStart !== null ? next(darkStart, sunFn, -18, 'rise') : null;
-    if (darkStart !== null && darkEnd !== null && darkStart - base < 86400000) {
-      rows.push(row('🌌', `Truly dark ${fmtTime(darkStart)} – ${fmtTime(darkEnd)}`, 'Astronomical darkness — best stargazing'));
+
+    const eveJd = A.jdFromMs(eveRef);
+    const eveSun = A.sunPosition(A.jdeFromJd(eveJd));
+    const eveSunAlt = A.altAz(eveSun.ra, eveSun.dec, A.lst(eveJd, state.lon), state.lat).alt;
+    if (eveSunAlt < -18) {
+      // already astronomically dark at the evening reference (deep polar winter)
+      const darkEnd = next(eveRef, sunFn, -18, 'rise');
+      if (darkEnd !== null && darkEnd - base < 86400000 * 1.5) {
+        rows.push(row('🌌', `Truly dark now – ${fmtTime(darkEnd)}`, 'Astronomical darkness — best stargazing'));
+      } else {
+        rows.push(row('🌌', 'Dark all night', 'Astronomical darkness around the clock'));
+      }
     } else {
-      rows.push(row('🌌', 'No full astronomical darkness', 'The sky stays in twilight tonight'));
+      const darkStart = next(eveRef, sunFn, -18, 'set');
+      const darkEnd = darkStart !== null ? next(darkStart, sunFn, -18, 'rise') : null;
+      if (darkStart !== null && darkEnd !== null && darkStart - base < 86400000) {
+        rows.push(row('🌌', `Truly dark ${fmtTime(darkStart)} – ${fmtTime(darkEnd)}`, 'Astronomical darkness — best stargazing'));
+      } else {
+        rows.push(row('🌌', 'No full astronomical darkness', 'The sky stays in twilight tonight'));
+      }
     }
 
-    // Moon
-    const m = A.moonPosition(A.jdeFromJd(A.jdFromMs(eveRef)));
-    const moonrise = next(base, moonFn, 0.125, 'rise');
+    // Moon — anchored to the evening so a moon already up isn't shown as "rises tomorrow"
+    const m = A.moonPosition(A.jdeFromJd(eveJd));
+    const mAlt = A.altAz(m.ra, m.dec, A.lst(eveJd, state.lon), state.lat).alt;
     const moonset = next(eveRef, moonFn, 0.125, 'set');
     const mBits = [];
-    if (moonrise !== null) mBits.push(`rises ${fmtTime(moonrise)}`);
-    if (moonset !== null) mBits.push(`sets ${fmtTime(moonset)}`);
+    if (mAlt >= 0.125) {
+      mBits.push(sunset !== null ? 'up at sunset' : 'up now');
+      if (moonset !== null) mBits.push(`sets ${fmtTime(moonset)}`);
+    } else {
+      const moonrise = next(eveRef, moonFn, 0.125, 'rise');
+      if (moonrise !== null && (sunrise === null || moonrise < sunrise)) {
+        mBits.push(`rises ${fmtTime(moonrise)}`);
+        if (moonset !== null) mBits.push(`sets ${fmtTime(moonset)}`);
+      } else {
+        mBits.push('not up during the night');
+      }
+    }
     rows.push(row('🌙', `${A.moonPhaseName(m.illum, m.waxing)} · ${Math.round(m.illum * 100)}%`, mBits.join(' · ')));
 
     // Planets
@@ -1150,10 +1191,11 @@
       const pv = A.planetPositions(A.jdeFromJd(jdEve)).find((q) => q.name === name);
       const aaEve = A.altAz(pv.ra, pv.dec, A.lst(jdEve, state.lon), state.lat);
       let main = '', sub = '';
-      if (pv.elong < 12) { main = `${name}: lost in the Sun’s glare`; }
+      if (polarDay) { main = `${name}: not observable`; sub = 'Continuous daylight — the sky never gets dark'; }
+      else if (pv.elong < 12) { main = `${name}: lost in the Sun’s glare`; }
       else if (aaEve.alt > 5) {
         const sets = next(eveRef, posFn, -0.5667, 'set');
-        main = `${name}: up after sunset`;
+        main = sunset !== null ? `${name}: up after sunset` : `${name}: up now`;
         sub = `Look ${windName(aaEve.az)}, ${Math.round(aaEve.alt)}° high` + (sets !== null ? ` · sets ${fmtTime(sets)}` : '');
       } else {
         const rises = next(eveRef, posFn, -0.5667, 'rise');

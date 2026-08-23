@@ -1,5 +1,6 @@
-/* Night Sky service worker — cache-first app shell so the planetarium works offline. */
-const CACHE = 'nightsky-v1';
+/* Night Sky service worker — offline-first app shell with background revalidation,
+ * so the app works with no signal yet still picks up deployed updates. */
+const CACHE = 'nightsky-v2';
 const ASSETS = [
   './',
   './index.html',
@@ -34,14 +35,18 @@ self.addEventListener('fetch', (e) => {
   if (url.origin !== location.origin) return;
   e.respondWith(
     caches.match(e.request, { ignoreSearch: true }).then((hit) => {
-      if (hit) return hit;
-      return fetch(e.request).then((res) => {
+      const refresh = fetch(e.request).then((res) => {
         if (res.ok) {
           const copy = res.clone();
-          caches.open(CACHE).then((c) => c.put(e.request, copy));
+          e.waitUntil(caches.open(CACHE).then((c) => c.put(e.request, copy)));
         }
         return res;
       });
+      if (hit) {
+        e.waitUntil(refresh.catch(() => { /* offline: cached copy already served */ }));
+        return hit;
+      }
+      return refresh;
     })
   );
 });

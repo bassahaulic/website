@@ -293,14 +293,17 @@
 
   const PLANET_NAMES = ['Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune'];
 
-  function planetMag(name, r, delta, iDeg) {
+  function planetMag(name, r, delta, iDeg, ringB) {
     const x = 5 * Math.log10(r * delta);
     switch (name) {
       case 'Mercury': return -0.42 + x + 0.0380 * iDeg - 0.000273 * iDeg * iDeg + 0.000002 * iDeg * iDeg * iDeg;
       case 'Venus': return -4.40 + x + 0.0009 * iDeg + 0.000239 * iDeg * iDeg - 0.00000065 * iDeg * iDeg * iDeg;
       case 'Mars': return -1.52 + x + 0.016 * iDeg;
       case 'Jupiter': return -9.40 + x + 0.005 * iDeg;
-      case 'Saturn': return -8.95 + x + 0.044 * iDeg; // ring contribution folded into constant
+      case 'Saturn': { // ring brightening from the Earth's saturnicentric latitude B (Meeus ch. 45)
+        const sB = Math.abs(sinD(ringB || 0));
+        return -8.88 + x + 0.044 * iDeg - 2.60 * sB + 1.25 * sB * sB;
+      }
       case 'Uranus': return -7.19 + x;
       case 'Neptune': return -6.87 + x;
     }
@@ -345,7 +348,19 @@
       cosE = Math.min(1, Math.max(-1, cosE));
       const elong = Math.acos(cosE) * R2D;
 
-      out.push({ name, ra, dec, dist: delta, mag: planetMag(name, r, delta, iDeg), elong });
+      let ringB = 0;
+      if (name === 'Saturn') { // Earth's saturnicentric latitude from geocentric ecliptic coords
+        const ex = eqDate[0];
+        const ey = eqDate[1] * cosD(eps) + eqDate[2] * sinD(eps);
+        const ez = -eqDate[1] * sinD(eps) + eqDate[2] * cosD(eps);
+        const lambda = Math.atan2(ey, ex) * R2D;
+        const beta = Math.atan2(ez, Math.hypot(ex, ey)) * R2D;
+        const iR = 28.075216 - 0.012998 * T + 0.000004 * T * T;
+        const OmR = 169.508470 + 1.394681 * T + 0.000412 * T * T;
+        ringB = Math.asin(sinD(iR) * cosD(beta) * sinD(lambda - OmR) - cosD(iR) * sinD(beta)) * R2D;
+      }
+
+      out.push({ name, ra, dec, dist: delta, mag: planetMag(name, r, delta, iDeg, ringB), elong });
     }
     return out;
   }
@@ -372,6 +387,23 @@
     const H = Math.atan2(sA * calt, cA * calt * sphi + salt * cphi) * R2D;
     const dec = Math.asin(salt * sphi - calt * cphi * cA) * R2D;
     return { ra: rev(lstDeg - H), dec };
+  }
+
+  // Topocentric place of a nearby body (the Moon; planets don't need it).
+  // Shifts geocentric RA/Dec (deg, of-date) to the observer's location by
+  // subtracting the observer's geocentric position vector (Meeus ch. 40,
+  // vector form; spherical Earth — flattening changes the correction <0.2%).
+  // distKm: geocentric distance. Returns {ra, dec, dist}.
+  function topocentric(raDeg, decDeg, distKm, lstDeg, latDeg) {
+    const R = 6378.14; // km
+    const v = raDecToVec(raDeg, decDeg);
+    const t = [
+      v[0] * distKm - R * cosD(latDeg) * cosD(lstDeg),
+      v[1] * distKm - R * cosD(latDeg) * sinD(lstDeg),
+      v[2] * distKm - R * sinD(latDeg),
+    ];
+    const rd = vecToRaDec(t);
+    return { ra: rd.ra, dec: rd.dec, dist: Math.hypot(t[0], t[1], t[2]) };
   }
 
   // Atmospheric refraction (Bennett), degrees, for apparent altitude computation.
@@ -435,7 +467,7 @@
     jdFromMs, jdeFromJd, centuries, gmst, lst, obliquity,
     precessionMatrix, applyMat, raDecToVec, vecToRaDec, eclToEq,
     sunPosition, moonPosition, moonPhaseName, planetPositions,
-    altAz, raDecFromAltAz, refraction, riseSetTransit, nextEvent,
+    altAz, raDecFromAltAz, topocentric, refraction, riseSetTransit, nextEvent,
     PLANET_NAMES,
   };
 
