@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#05070f">
+<meta name="description" content="A pocket planetarium — point your phone at the sky to identify stars, constellations, planets and the Moon.">
+<title>Night Sky</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="app">
+  <canvas id="sky"></canvas>
+
+  <!-- top bar -->
+  <div class="bar top-bar">
+    <button id="btn-location" class="chip" title="Set location">📍 <span id="location-label">Set location</span></button>
+    <div class="spacer"></div>
+    <button id="btn-search" class="icon-btn" title="Search">🔍</button>
+    <button id="btn-night" class="icon-btn" title="Night vision (red) mode">🔴</button>
+    <button id="btn-compass" class="icon-btn" title="Point-at-sky mode">🧭</button>
+    <button id="btn-help" class="icon-btn" title="Help">?</button>
+  </div>
+
+  <!-- bottom bar -->
+  <div class="bar bottom-bar">
+    <button id="btn-time" class="chip">🕐 <span id="time-label">Now</span></button>
+    <div class="spacer"></div>
+    <button id="btn-tonight" class="chip">✨ Tonight</button>
+  </div>
+
+  <!-- search sheet -->
+  <div id="search-sheet" class="sheet hidden">
+    <input id="search-input" type="search" placeholder="Star, planet, constellation…" autocomplete="off">
+    <div id="search-results"></div>
+  </div>
+
+  <!-- target guidance chip -->
+  <div id="target-chip" class="target-chip hidden">
+    <span id="target-chip-label"></span>
+    <button id="target-chip-close">✕</button>
+  </div>
+
+  <!-- time sheet -->
+  <div id="time-sheet" class="sheet hidden">
+    <div class="sheet-title">Time travel</div>
+    <input id="time-slider" type="range" min="-720" max="720" step="5" value="0">
+    <div class="row">
+      <span id="time-slider-label" class="muted">±12 h</span>
+      <div class="spacer"></div>
+      <input id="time-date" type="datetime-local">
+      <button id="btn-time-now" class="chip">Now</button>
+    </div>
+  </div>
+
+  <!-- location sheet -->
+  <div id="location-sheet" class="sheet hidden">
+    <div class="sheet-title">Your location</div>
+    <p class="muted">Needed to compute your local sky. It never leaves your phone.</p>
+    <button id="btn-geolocate" class="btn-primary">📍 Use my location</button>
+    <div class="row">
+      <input id="lat-input" type="number" step="0.0001" min="-90" max="90" placeholder="Latitude">
+      <input id="lon-input" type="number" step="0.0001" min="-180" max="180" placeholder="Longitude">
+      <button id="btn-latlon-apply" class="chip">Apply</button>
+    </div>
+    <p id="location-status" class="muted"></p>
+  </div>
+
+  <!-- tonight sheet -->
+  <div id="tonight-sheet" class="sheet hidden">
+    <div class="sheet-title">Tonight’s sky</div>
+    <div id="tonight-body"></div>
+  </div>
+
+  <!-- object info card -->
+  <div id="info-card" class="info-card hidden">
+    <div class="info-head">
+      <div>
+        <div id="info-name"></div>
+        <div id="info-sub" class="muted"></div>
+      </div>
+      <button id="info-close">✕</button>
+    </div>
+    <div id="info-body"></div>
+  </div>
+
+  <!-- toast -->
+  <div id="toast" class="toast hidden"></div>
+
+  <!-- help / onboarding -->
+  <div id="help-overlay" class="overlay hidden">
+    <div class="overlay-card">
+      <h1>🌌 Night Sky</h1>
+      <p>A pocket planetarium for the two of you.</p>
+      <ol>
+        <li><b>📍 Set your location</b> so the sky matches what’s above you.</li>
+        <li><b>🧭 Point-at-sky mode</b> — hold your phone up and aim it at the sky; the map follows where you point.</li>
+        <li><b>Tap</b> any star, planet or the Moon to identify it.</li>
+        <li><b>🔴 Night mode</b> turns everything red to protect your dark-adapted eyes.</li>
+        <li><b>✨ Tonight</b> shows sunset, darkness, moonrise and which planets are out.</li>
+      </ol>
+      <p class="muted">Tip: install it — open your browser menu and choose “Add to Home screen”. Works offline afterwards.</p>
+      <p class="muted">Compass note: phone compasses can drift a few degrees (wave your phone in a figure-8 to calibrate) and point to magnetic north.</p>
+      <button id="btn-help-close" class="btn-primary">Start exploring</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/astro.js"></script>
+<script src="js/data/stars.js"></script>
+<script src="js/data/constellations.js"></script>
+<script src="js/data/dsos.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
